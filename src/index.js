@@ -10,6 +10,7 @@ async function updateStatus() {
     const tempData = await si.cpuTemperature();
 
     // Discord-Format: vollständiges Datum + Uhrzeit
+    const timestamp = Math.floor(Date.now() / 1000);
     const lastUpdate = `<t:${timestamp}:R>`;
 
     const cpuLoad = load.currentLoad.toFixed(1);
