@@ -9,10 +9,13 @@ async function updateStatus() {
     const load = await si.currentLoad();
     const tempData = await si.cpuTemperature();
 
+    // Discord-Format: vollständiges Datum + Uhrzeit
+    const lastUpdate = `<t:${timestamp}:R>`;
+
     const cpuLoad = load.currentLoad.toFixed(1);
     const temp = tempData.main ? tempData.main.toFixed(1) : 'N/A';
 
-    const status = `🖥️: ${cpuLoad}% | 🌡️: ${temp}°C`;
+    const status = `🖥️: ${cpuLoad}% | 🌡️: ${temp}°C - ${lastUpdate}`;
 
     client.user.setPresence({
         activities: [{ name: status, type: ActivityType.Watching }],
