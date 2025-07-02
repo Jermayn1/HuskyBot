@@ -20,7 +20,7 @@ async function updateStatus() {
     const cpuLoad = load.currentLoad.toFixed(1);
     const temp = tempData.main ? tempData.main.toFixed(1) : 'N/A';
 
-    const status = `🖥️: ${cpuLoad}% | 🌡️: ${temp}°C - 🕒: ${time}`;
+    const status = `🖥️: ${cpuLoad}% | 🌡️: ${temp}°C - 🕒: ${time} 420!`;
 
     client.user.setPresence({
         activities: [{ name: status, type: ActivityType.Watching }],
