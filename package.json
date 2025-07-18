@@ -18,8 +18,13 @@
   "homepage": "https://github.com/Jermayn1/HuskyBot#readme",
   "description": "",
   "dependencies": {
+    "@napi-rs/canvas": "^0.1.73",
+    "discord-arts": "^0.7.1",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
+    "install": "^0.13.0",
+    "npm": "^11.4.2",
+    "path": "^0.12.7",
     "systeminformation": "^5.25.11"
   }
 }

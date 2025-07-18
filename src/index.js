@@ -1,8 +1,19 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, ActivityType, REST, Routes, SlashCommandBuilder, InteractionType } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, Partials } = require('discord.js');
 const si = require('systeminformation');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+// Intents & Partials
+const { Guilds, GuildMembers, GuildMessages, GuildPresences, MessageContent, GuildVoiceStates } = GatewayIntentBits;
+const { User, Message, GuildMember, ThreadMember } = Partials;
+
+// Erstellt den Client
+const client = new Client({
+    intents: [ Guilds, GuildMembers, GuildMessages, GuildPresences, MessageContent, GuildVoiceStates ],
+    partials: [ User, Message, GuildMember, ThreadMember ]
+});5
+
+client.config = require("./config.json");
+
 
 // === SLASH COMMAND REGISTRIERUNG ===
 const commands = [
@@ -15,20 +26,37 @@ const commands = [
 client.once('ready', async () => {
   console.log(`Eingeloggt als ${client.user.tag}`);
 
-  // Slash Command global registrieren (kann bis zu 1 Stunde dauern)
-  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
-  try {
-    await rest.put(
-      Routes.applicationCommands(client.user.id),
-      { body: commands },
-    );
-    console.log('Slash Commands erfolgreich registriert.');
-  } catch (error) {
-    console.error('Fehler bei der Command-Registrierung:', error);
-  }
+  const { registerFonts } = require("./Structures/Systems/Welcome/registerFonts");
+  await registerFonts();
 
-  updateStatus();
-  setInterval(updateStatus, 30000);
+  const now = new Date();
+
+  // Datum im Format DD.MM.YYYY
+  const date = now.toLocaleDateString('de-DE');
+
+  // Uhrzeit im Format HH:MM:SS
+  const time = now.toLocaleTimeString('de-DE');
+
+  // Komplett als String zusammenfügen
+  const dateTime = `${date} ${time}`;
+
+  client.user.setPresence({
+    activities: [{
+      name: dateTime,
+      type: ActivityType.Watching
+    }],
+    status: 'dnd'
+  });
+});
+
+const { genWelcomeCard } = require("./Structures/Systems/Welcome/profile-image");
+
+client.on('guildMemberAdd', async (member) => {
+  try {
+    genWelcomeCard(client, member)
+  } catch(err) {
+    console.log(err)
+  }
 });
 
 // === SLASH COMMAND HANDLER ===
@@ -39,32 +67,5 @@ client.on('interactionCreate', async interaction => {
     await interaction.reply('Pong!');
   }
 });
-
-async function updateStatus() {
-  try {
-    const load = await si.currentLoad();
-    const tempData = await si.cpuTemperature();
-
-    const now = new Date();
-    const time = now.toLocaleTimeString("de-DE", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-
-    const cpuLoad = load.currentLoad.toFixed(1);
-    const temp = tempData.main ? tempData.main.toFixed(1) : 'N/A';
-
-    const status = `🖥️: ${cpuLoad}% | 🌡️: ${temp}°C - 🕒: ${time} 420!`;
-
-    client.user.setPresence({
-      activities: [{ name: status, type: ActivityType.Watching }],
-      status: 'dnd',
-    });
-    console.log(`Status aktualisiert: ${status}`);
-  } catch (error) {
-    console.error('Fehler beim Status-Update:', error);
-  }
-}
 
 client.login(process.env.DISCORD_TOKEN);
