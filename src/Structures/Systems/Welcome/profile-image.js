@@ -59,11 +59,11 @@ const options = {
     dateColor: '#dadada'
 }
 
-
 /**
- * 
+ * Erstellt das Willkomensbild
  * @param {Client} client 
- * @param {Member} member 
+ * @param {GuildMember} member 
+ * @returns Discord Attachment welcome.png
  */
 async function genWelcomeCard(client, member) {
     // Basis Leinwand erstellen
@@ -104,14 +104,9 @@ async function genWelcomeCard(client, member) {
     context.drawImage(joinDate, 0, 0)
 
     // Wandelt das Bild in ein Discord Attachment um
-    const attachment = new AttachmentBuilder(await userCard.encode('png'), { name: "user-card.png" });
+    const attachment = new AttachmentBuilder(await userCard.encode('png'), { name: "welcome.png" });
 
-    // Sendet es in mein Test Channel
-    const welcomeChannel = await client.channels.cache.get("1395132362408591564");
-    welcomeChannel.send({
-        files: [attachment]
-    });
-
+    return attachment;
 
     // WEITERE IDEEN
     /*

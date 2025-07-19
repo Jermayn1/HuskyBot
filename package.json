@@ -22,7 +22,9 @@
     "discord-arts": "^0.7.1",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
+    "glob": "^11.0.3",
     "install": "^0.13.0",
+    "mongoose": "^8.16.4",
     "npm": "^11.4.2",
     "path": "^0.12.7",
     "systeminformation": "^5.25.11"

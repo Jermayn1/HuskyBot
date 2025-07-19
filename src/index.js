@@ -1,6 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, ActivityType, SlashCommandBuilder, Partials } = require('discord.js');
-const si = require('systeminformation');
+const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
 
 // Intents & Partials
 const { Guilds, GuildMembers, GuildMessages, GuildPresences, MessageContent, GuildVoiceStates } = GatewayIntentBits;
@@ -12,60 +11,19 @@ const client = new Client({
     partials: [ User, Message, GuildMember, ThreadMember ]
 });5
 
+// Fügt die Config zum client hinzu
 client.config = require("./config.json");
 
+// Collections für Events, Commands, etc.
+client.events = new Collection();
+client.commands = new Collection();
+client.subCommands = new Collection();
+client.buttons = new Collection();
+client.selectMenus = new Collection();
+client.modals = new Collection();
 
-// === SLASH COMMAND REGISTRIERUNG ===
-const commands = [
-  new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Antwortet mit Pong!')
-    .toJSON()
-];
-
-client.once('ready', async () => {
-  console.log(`Eingeloggt als ${client.user.tag}`);
-
-  const { registerFonts } = require("./Structures/Systems/Welcome/registerFonts");
-  await registerFonts();
-
-  const now = new Date();
-
-  // Datum im Format DD.MM.YYYY
-  const date = now.toLocaleDateString('de-DE');
-
-  // Uhrzeit im Format HH:MM:SS
-  const time = now.toLocaleTimeString('de-DE');
-
-  // Komplett als String zusammenfügen
-  const dateTime = `${date} ${time}`;
-
-  client.user.setPresence({
-    activities: [{
-      name: dateTime,
-      type: ActivityType.Watching
-    }],
-    status: 'dnd'
-  });
-});
-
-const { genWelcomeCard } = require("./Structures/Systems/Welcome/profile-image");
-
-client.on('guildMemberAdd', async (member) => {
-  try {
-    genWelcomeCard(client, member)
-  } catch(err) {
-    console.log(err)
-  }
-});
-
-// === SLASH COMMAND HANDLER ===
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-
-  if (interaction.commandName === 'ping') {
-    await interaction.reply('Pong!');
-  }
-});
+// Lädt den Event Händler
+const { loadEvents } = require("./Structures/Handlers/eventHandler");
+loadEvents(client);
 
 client.login(process.env.DISCORD_TOKEN);
