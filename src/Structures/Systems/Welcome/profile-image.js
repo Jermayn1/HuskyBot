@@ -437,12 +437,8 @@ async function genDate(member) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = options.dateColor;
-    
-    // Mittelpunkt berechnen und Text setzten
-    const centerX = 696 + 165 / 2;
-    const centerY = 248 + 33 / 2;
+    ctx.fillText(date, 778.5, 267.2);
 
-    ctx.fillText(date, centerX, centerY)
     return canvas;
 }
 
